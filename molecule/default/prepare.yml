@@ -1,0 +1,16 @@
+---
+- name: Prepare
+  hosts: all
+  become: true
+  tasks:
+    # SSH is installed and running by default on a normal Debian system, but not in a Docker image
+    - name: Install SSH
+      apt:
+        name: ssh
+        update_cache: true
+    # sshd needs to be running for validation of sshd_config
+    - name: Start and enable SSH
+      service:
+        name: ssh
+        state: started
+        enabled: true

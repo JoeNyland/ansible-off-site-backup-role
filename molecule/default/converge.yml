@@ -1,0 +1,15 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include joenyland.off_site_backup"
+      include_role:
+        name: "joenyland.off_site_backup"
+      vars:
+        off_site_backup_destination_host: backup-server
+        off_site_backup_source_host: server
+        off_site_backup_tasks:
+          - source: syncoid@server:bpool
+            destination: off-site/bpool
+            hour: 1
+            minute: 0

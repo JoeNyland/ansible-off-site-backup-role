@@ -1,0 +1,20 @@
+galaxy_info:
+  author: Joe Nyland
+  role_name: off_site_backup
+  namespace: joenyland
+  description: Sets up off-site backups using ZFS and Syncoid
+  license: MIT
+  min_ansible_version: '2.1'
+  platforms:
+  - name: Debian
+    versions:
+      - bullseye # 11 (stable)
+      - buster # 10 (oldstable)
+      - stretch # 9 LTS (oldoldstable)
+  galaxy_tags:
+    - backup
+    - zfs
+dependencies:
+  - role: joenyland.zfs
+  - role: joenyland.ssh
+  - role: joenyland.sanoid

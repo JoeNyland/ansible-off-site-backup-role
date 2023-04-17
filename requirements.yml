@@ -1,0 +1,7 @@
+---
+roles:
+  - src: joenyland.zfs
+  - src: joenyland.ssh
+  - src: joenyland.sanoid
+collections:
+  - community.general

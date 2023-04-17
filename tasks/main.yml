@@ -1,0 +1,75 @@
+---
+- name: Setup off-site backups
+  become: true
+  tags:
+    - backup
+    - off-site-backup
+  block:
+    - name: Create user on backup destination host
+      user:
+        name: "{{ off_site_backup_user }}"
+        generate_ssh_key: true
+        ssh_key_comment: "{{ off_site_backup_user }}@{{ off_site_backup_destination_host }}"
+        system: true
+        password_lock: true
+        home: /var/lib/{{ off_site_backup_user }}
+      delegate_to: "{{ off_site_backup_destination_host }}"
+      run_once: true
+      register: off_site_backup_destination_host_user
+
+    - name: Create user on backup source server
+      user:
+        name: "{{ off_site_backup_user }}"
+        system: true
+        password_lock: true
+        home: /var/lib/{{ off_site_backup_user }}
+      delegate_to: "{{ off_site_backup_source_host }}"
+      run_once: true
+
+
+    - name: Install SSH public key in backup source server
+      authorized_key:
+        user: "{{ off_site_backup_user }}"
+        key: "{{ off_site_backup_destination_host_user.ssh_public_key }}"
+      delegate_to: "{{ off_site_backup_source_host }}"
+      run_once: true
+
+    - name: Install host keys for backup source server on backup destination host
+      shell: ssh-keyscan {{ off_site_backup_source_host }} >> /etc/ssh/ssh_known_hosts
+      register: off_site_backup_user_ssh_keyscan
+      changed_when: "'changed' in off_site_backup_user_ssh_keyscan.stdout"
+      delegate_to: "{{ off_site_backup_destination_host }}"
+      tags: notest # We cannot scan hosts for keys in CI
+      run_once: true
+
+    - name: Install cron
+      apt:
+        name: cron
+        update_cache: true
+      delegate_to: "{{ off_site_backup_destination_host }}"
+      run_once: true
+
+    - name: Configure cron(s) to perform off-site backups
+      cron:
+        user: "{{ off_site_backup_user }}"
+        name: Off-site backup {{ item.source }} -> {{ item.destination }}
+        job: >
+          [ $(pgrep syncoid) ] || /usr/sbin/syncoid
+          --no-privilege-elevation
+          --recursive
+          --no-sync-snap
+          {% if item.send_options is defined %}
+          --sendoptions="{{ item.send_options | join }}"
+          {% endif %}
+          {{ item.source }}
+          {{ item.destination }}
+        minute: "{{ item.minute | default('0') }}"
+        hour: "{{ item.hour | default('0') }}"
+        day: "{{ item.day | default('*') }}"
+        month: "{{ item.month | default('*') }}"
+        weekday: "{{ item.weekday | default('*') }}"
+      loop: "{{ off_site_backup_tasks }}"
+      loop_control:
+        label: "{{ item.source }} -> {{ item.destination }}"
+      delegate_to: "{{ off_site_backup_destination_host }}"
+      run_once: true
