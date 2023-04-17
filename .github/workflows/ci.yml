@@ -32,3 +32,20 @@ jobs:
         uses: gofrolist/molecule-action@v2
         env:
           IMAGE: ${{ matrix.image }}
+
+  publish:
+    runs-on: ubuntu-latest
+    needs:
+      - lint
+      - molecule
+    if: github.ref_name == 'main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # needed for progressive mode to work
+      - name: Publish
+        uses: robertdebock/galaxy-action@1.2.0
+        with:
+          galaxy_api_key: ${{ secrets.GALAXY_API_KEY }}
+          git_branch: main
