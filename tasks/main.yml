@@ -34,14 +34,6 @@
       delegate_to: "{{ off_site_backup_source_host }}"
       run_once: true
 
-    - name: Install host keys for backup source server on backup destination host
-      shell: ssh-keyscan {{ off_site_backup_source_host }} >> /etc/ssh/ssh_known_hosts
-      register: off_site_backup_user_ssh_keyscan
-      changed_when: "'changed' in off_site_backup_user_ssh_keyscan.stdout"
-      delegate_to: "{{ off_site_backup_destination_host }}"
-      tags: notest # We cannot scan hosts for keys in CI
-      run_once: true
-
     - name: Install cron
       apt:
         name: cron
