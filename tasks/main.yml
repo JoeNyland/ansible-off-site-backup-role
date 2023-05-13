@@ -3,7 +3,7 @@
   become: true
   tags:
     - backup
-    - off-site-backup
+    - off_site_backup
   block:
     - name: Create user on backup destination host
       user:
