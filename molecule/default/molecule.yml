@@ -5,7 +5,7 @@ driver:
   name: docker
 platforms:
   - name: server
-    image: '${IMAGE:-geerlingguy/docker-debian11-ansible}'
+    image: '${IMAGE:-geerlingguy/docker-debian12-ansible}'
     pre_build_image: true
     command: ""
     volumes:
@@ -14,7 +14,7 @@ platforms:
     cgroupns_mode: host
     privileged: true
   - name: backup-server
-    image: '${IMAGE:-geerlingguy/docker-debian11-ansible}'
+    image: '${IMAGE:-geerlingguy/docker-debian12-ansible}'
     pre_build_image: true
     command: ""
     volumes:
