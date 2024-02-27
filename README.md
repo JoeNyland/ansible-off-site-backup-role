@@ -16,14 +16,6 @@ Requirements
 Role Variables
 --------------
 
-### `off_site_backup_destination_host`
-
-The off-site backup host.
-
-### `off_site_backup_source_host`
-
-The host where backups will be pulled from.
-
 ### `off_site_backup_tasks`
 
 A list of hashes, representing each off-site backup task.
@@ -61,13 +53,13 @@ Example Playbook
   roles:
     - role: joenyland.off_site_backup
       vars:
-        off_site_backup_destination_host: backup-host
-        off_site_backup_source_host: server
         off_site_backup_tasks:
-          - source: syncoid@server:bpool
-            destination: off-site/bpool
+          - name: Off-site backup
             hour: 1
             minute: 0
+            tasks:
+              - source: syncoid@server:bpool
+                destination: off-site/bpool
 ```
 
 License
