@@ -14,3 +14,9 @@
         name: ssh
         state: started
         enabled: true
+    # User needs to exist
+    - name: Create user
+      user:
+        name: syncoid
+        system: true
+        password_lock: true
