@@ -1,5 +1,3 @@
 ---
-off_site_backup_destination_host:
-off_site_backup_source_host:
 off_site_backup_tasks: []
 off_site_backup_user: syncoid
