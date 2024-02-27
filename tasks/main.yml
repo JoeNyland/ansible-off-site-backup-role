@@ -13,17 +13,21 @@
     - name: Configure cron(s) to perform off-site backups
       cron:
         user: "{{ off_site_backup_user }}"
-        name: Off-site backup {{ item.source }} -> {{ item.destination }}
+        name: "Off-site backup: {{ item.name }}"
         job: >
+          {% set divider = joiner(";") %}
+          {% for task in item.tasks %}
+          {{ divider() }}
           /usr/sbin/syncoid
           --no-privilege-elevation
           --recursive
           --no-sync-snap
-          {% if item.send_options is defined %}
-          --sendoptions="{{ item.send_options | join }}"
+          {% if task.send_options is defined %}
+          --sendoptions="{{ task.send_options | join }}"
           {% endif %}
-          {{ item.source }}
-          {{ item.destination }}
+          {{ task.source }}
+          {{ task.destination }}
+          {% endfor %}
         minute: "{{ item.minute | default('0') }}"
         hour: "{{ item.hour | default('0') }}"
         day: "{{ item.day | default('*') }}"
@@ -31,4 +35,4 @@
         weekday: "{{ item.weekday | default('*') }}"
       loop: "{{ off_site_backup_tasks }}"
       loop_control:
-        label: "{{ item.source }} -> {{ item.destination }}"
+        label: "{{ item.name }}"
