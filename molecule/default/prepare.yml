@@ -20,3 +20,10 @@
         name: syncoid
         system: true
         password_lock: true
+    # ZFS needs to be installed from the contrib repo
+    - name: Install contrib repo
+      apt_repository:
+        repo: deb http://deb.debian.org/debian {{ ansible_distribution_release }} contrib
+        state: present
+        filename: contrib
+        update_cache: true
