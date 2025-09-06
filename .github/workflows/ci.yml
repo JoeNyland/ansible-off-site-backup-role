@@ -26,9 +26,9 @@ jobs:
           - geerlingguy/docker-debian11-ansible # bullseye (oldstable)
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
-          fetch-depth: 0 # needed for progressive mode to work
+          path: "${{ github.repository }}"
       - name: Run molecule
         uses: gofrolist/molecule-action@v2
         env:
