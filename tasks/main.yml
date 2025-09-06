@@ -22,6 +22,7 @@
           --no-privilege-elevation
           --recursive
           --no-sync-snap
+          --quiet
           {% if task.send_options is defined %}
           --sendoptions="{{ task.send_options | join }}"
           {% endif %}
